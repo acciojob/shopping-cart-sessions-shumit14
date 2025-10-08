@@ -1,5 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
 // Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
@@ -9,30 +7,60 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-// DOM elements
 const productList = document.getElementById("product-list");
+const cartList = document.getElementById("cart-list");
+const clearCartBtn = document.getElementById("clear-cart-btn");
 
-// Render product list
+// ✅ Load cart from sessionStorage (if available)
+let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+// Function to render product list
 function renderProducts() {
+  productList.innerHTML = "";
   products.forEach((product) => {
     const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
+    li.innerHTML = `
+      <span>${product.name} - $${product.price}</span>
+      <button>Add to Cart</button>
+    `;
+    const button = li.querySelector("button");
+    button.addEventListener("click", () => addToCart(product));
     productList.appendChild(li);
   });
 }
 
-// Render cart list
-function renderCart() {}
+// Function to render the shopping cart
+function renderCart() {
+  cartList.innerHTML = "";
+  cart.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = `${item.name} - $${item.price}`;
+    cartList.appendChild(li);
+  });
+}
 
-// Add item to cart
-function addToCart(productId) {}
+// Add item to cart and update sessionStorage
+function addToCart(product) {
+  cart.push(product);
+  updateSessionStorage();
+  renderCart();
+}
 
-// Remove item from cart
-function removeFromCart(productId) {}
+// Clear cart functionality
+function clearCart() {
+  cart = [];
+  updateSessionStorage();
+  renderCart();
+}
 
-// Clear cart
-function clearCart() {}
+// Update sessionStorage with current cart data
+function updateSessionStorage() {
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+}
 
-// Initial render
+// Initialize page
 renderProducts();
 renderCart();
+
+// Clear Cart button click handler
+clearCartBtn.addEventListener("click", clearCart);
